@@ -125,6 +125,13 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
     }
   }
 
+  const makeCompressedFile = (blob: Blob, originalFile: File) => {
+    // Ambil nama file tanpa ekstensi lama
+    const originalName = originalFile.name.substring(0, originalFile.name.lastIndexOf('.')) || originalFile.name
+    const newFileName = `${originalName}.jpg`
+    return new File([blob], newFileName, { type: "image/jpeg" })
+  }
+
   const prepareFilesBeforeSubmit = async (docs: Record<string, File | null>) => {
     const processed: Record<string, File> = {}
     let totalSize = 0
@@ -134,7 +141,8 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
 
       let fileToUpload = file
       if (isImageFile(file)) {
-        fileToUpload = await compressImageFile(file)
+        const compressedBlob = await compressImageFile(file)
+        fileToUpload = makeCompressedFile(compressedBlob, file)
       }
       
       processed[key] = fileToUpload
@@ -162,7 +170,7 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
       fd.append('formData', JSON.stringify(formData))
       
       Object.entries(processed).forEach(([key, file]) => {
-        fd.append(key, file)
+        fd.append(key, file, file.name)
       })
 
       const res = await fetch('/api/order', { method: 'POST', body: fd })

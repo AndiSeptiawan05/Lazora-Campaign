@@ -68,7 +68,7 @@ ${parsed.workExperiences.map((w: { companyName: string; position: string; durati
         // Prepare multipart form data for file upload
         const fileForm = new FormData();
         fileForm.append('chat_id', chatId);
-        fileForm.append('document', file as any);
+        fileForm.append('document', file as any, (file as any).name);
         fileForm.append('caption', `Dokumen: ${key}`);
 
         const docResponse = await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {

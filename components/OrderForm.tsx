@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { User, Phone, Mail, MapPin, Building, GraduationCap, Award, ChevronRight, ChevronLeft, FileText, FileCheck } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import imageCompression from 'browser-image-compression'
 import DocumentUpload from './DocumentUpload'
 
 interface WorkExperience {
@@ -104,14 +105,64 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
     window.scrollTo({ top: document.getElementById('order-form')?.offsetTop ?? 0, behavior: 'smooth' })
   }
 
+  const isImageFile = (file: File) => {
+    return /\.(jpg|jpeg|png|webp)$/i.test(file.name) || file.type.startsWith('image/')
+  }
+
+  const compressImageFile = async (file: File) => {
+    const options = {
+      maxSizeMB: 0.8,
+      maxWidthOrHeight: 1600,
+      useWebWorker: true,
+      initialQuality: 0.8,
+      fileType: 'image/jpeg' as any
+    }
+    try {
+      return await imageCompression(file, options)
+    } catch (error) {
+      console.error('Gagal kompres:', file.name, error)
+      return file
+    }
+  }
+
+  const prepareFilesBeforeSubmit = async (docs: Record<string, File | null>) => {
+    const processed: Record<string, File> = {}
+    let totalSize = 0
+
+    const promises = Object.entries(docs).map(async ([key, file]) => {
+      if (!file) return
+
+      let fileToUpload = file
+      if (isImageFile(file)) {
+        fileToUpload = await compressImageFile(file)
+      }
+      
+      processed[key] = fileToUpload
+      totalSize += fileToUpload.size
+    })
+
+    await Promise.all(promises)
+    return { processed, totalSize }
+  }
+
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
+      const MAX_TOTAL_SIZE = 3.5 * 1024 * 1024
+      const { processed, totalSize } = await prepareFilesBeforeSubmit(documents)
+
+      if (totalSize > MAX_TOTAL_SIZE) {
+        toast.error(`Total ukuran file (${(totalSize / 1024 / 1024).toFixed(2)}MB) masih terlalu besar setelah dikompres. Mohon kurangi jumlah file atau kompres file terlebih dahulu.`)
+        setIsSubmitting(false)
+        return
+      }
+
       const fd = new FormData()
       fd.append('plan', plan)
       fd.append('formData', JSON.stringify(formData))
-      Object.entries(documents).forEach(([key, file]) => {
-        if (file) fd.append(key, file)
+      
+      Object.entries(processed).forEach(([key, file]) => {
+        fd.append(key, file)
       })
 
       const res = await fetch('/api/order', { method: 'POST', body: fd })
@@ -119,10 +170,12 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
         toast.success('Pesanan berhasil dikirim! Kami akan segera menghubungi kamu. 🎉')
         setStep(totalSteps + 1)
       } else {
-        toast.error('Terjadi kesalahan. Coba lagi ya.')
+        const errorData = await res.json().catch(() => ({}))
+        toast.error(errorData.message || 'Gagal mengirim pesanan. Silakan periksa kembali data Anda.')
       }
-    } catch {
-      toast.error('Koneksi bermasalah. Coba lagi.')
+    } catch (error) {
+      console.error('Submit error:', error)
+      toast.error('Terjadi masalah saat mengirim data. Pastikan koneksi stabil dan ukuran file tidak terlalu besar.')
     } finally {
       setIsSubmitting(false)
     }

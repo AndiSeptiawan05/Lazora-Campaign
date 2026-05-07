@@ -95,7 +95,7 @@ export default function HomePage() {
               </p>
 
               <ul className="space-y-3 mb-8">
-                {['CV profesional 1 halaman', 'Desain modern & ATS-friendly', 'Format PDF & Word', 'Revisi 2x gratis', 'Surat lamaran kerja', 'Pengerjaan 1-2 hari kerja'].map(f => (
+                {['CV profesional 1 halaman', 'Desain modern & ATS-friendly', 'Format PDF', 'Revisi 2x gratis', 'Surat lamaran kerja', 'Pengerjaan 1-2 hari kerja'].map(f => (
                   <li key={f} className="flex items-center gap-3 text-sm text-white/70">
                     <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)' }}>
                       <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

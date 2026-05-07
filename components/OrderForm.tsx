@@ -144,7 +144,7 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
         const compressedBlob = await compressImageFile(file)
         fileToUpload = makeCompressedFile(compressedBlob, file)
       }
-      
+
       processed[key] = fileToUpload
       totalSize += fileToUpload.size
     })
@@ -168,7 +168,7 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
       const fd = new FormData()
       fd.append('plan', plan)
       fd.append('formData', JSON.stringify(formData))
-      
+
       Object.entries(processed).forEach(([key, file]) => {
         fd.append(key, file, file.name)
       })
@@ -200,7 +200,7 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
           Kami akan segera memproses pesanan kamu dan menghubungi kamu melalui WhatsApp/Email dalam waktu 1×24 jam.
         </p>
         <div className="mt-8 glass-card rounded-2xl p-4 inline-block">
-          <p className="text-white text-sm font-semibold">📦 {plan === 'cv' ? 'Paket CV Only — Rp 10.000' : 'Paket CV + Dokumen Lengkap — Rp 20.000'}</p>
+          <p className="text-white text-sm font-semibold">📦 {plan === 'cv' ? 'Paket CV Only — Rp 10.000' : 'Paket CV + Dokumen Lengkap — Rp 25.000'}</p>
         </div>
       </div>
     )
@@ -216,7 +216,7 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
               ? <FileText className="w-5 h-5 text-white" />
               : <FileCheck className="w-5 h-5 text-white" />}
             <span className="font-outfit font-bold text-white">
-              {plan === 'cv' ? 'Paket CV Only — Rp 10.000' : 'Paket CV + Dokumen Lengkap — Rp 20.000'}
+              {plan === 'cv' ? 'Paket CV Only — Rp 10.000' : 'Paket CV + Dokumen Lengkap — Rp 25.000'}
             </span>
           </div>
           <button
@@ -231,14 +231,13 @@ export default function OrderForm({ plan, onChangePlan }: OrderFormProps) {
         <div className="flex items-center gap-2">
           {Array.from({ length: totalSteps }, (_, i) => i + 1).map((s) => (
             <div key={s} className="flex items-center gap-2">
-              <div 
-                className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all ${
-                  s === step 
-                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.5)]' 
-                    : s < step 
-                      ? 'bg-green-500/20 border-2 border-green-500/50 text-green-500' 
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all ${s === step
+                    ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.5)]'
+                    : s < step
+                      ? 'bg-green-500/20 border-2 border-green-500/50 text-green-500'
                       : 'bg-white/5 border-2 border-white/10 text-white/30'
-                }`}
+                  }`}
               >
                 {s < step ? '✓' : s}
               </div>

@@ -160,7 +160,7 @@ export default function HomePage() {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05))', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)' }}>
                     ⭐ Paling Populer
                   </div>
-                  <span className="font-outfit font-black text-4xl text-white leading-none">Rp 20.000</span>
+                  <span className="font-outfit font-black text-4xl text-white leading-none">Rp 25.000</span>
                 </div>
                 <div className="flex items-center gap-2 text-white font-semibold text-sm mb-1">
                   Pilih Paket <ChevronRight className="w-4 h-4" />
